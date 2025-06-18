@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const cors = require("cors");
-
+require('dotenv').config();
 const app = express();
 const port = 3001;
 
@@ -10,9 +10,12 @@ const port = 3001;
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
+  database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
+   ssl: {
+    rejectUnauthorized: false // allow self-signed certs or default cloud certs
+  }
 });
 
 // Middleware
@@ -33,7 +36,7 @@ app.post("/login", async (req, res) => {
     );
     res.send("Login data stored successfully!");
   } catch (error) {
-    console.error("Error saving data:", error);
+    console.error("Error saving data:", error.toString());
     res.status(500).send("Error saving data");
   }
 });
